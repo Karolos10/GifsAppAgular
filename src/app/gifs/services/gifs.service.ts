@@ -22,6 +22,17 @@ export class GifsService {
 
   trendingGifs = signal<Gif[]>([]);
   trendingGifsLoading = signal(true);
+
+  trendingGifGroup = computed<Gif[][]>(() => {
+    const groups = [];
+
+    for(let i = 0; i < this.trendingGifs().length; i += 3){
+      groups.push(this.trendingGifs().slice(i, i + 3));
+    }
+
+    return groups;
+  })
+
   searchHistory = signal<Record<string, Gif[]>>(loadFromLocalStorage());
   serachHistoryKeys = computed(() => Object.keys(this.searchHistory()));
 
@@ -46,7 +57,7 @@ export class GifsService {
       const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
       this.trendingGifs.set(gifs);
       this.trendingGifsLoading.set(false);
-      console.log({gifs});
+      //console.log({gifs});
     })
   }
 
