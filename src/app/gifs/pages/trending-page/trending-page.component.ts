@@ -27,10 +27,17 @@ export default class TrendingPageComponent {
 
   gifService = inject(GifsService);
 
-  scrollDivRef = viewChild<ElementRef>('groupDiv')
+  scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv')
 
   onScroll(event: Event){
     const scrollDiv = this.scrollDivRef()?.nativeElement;
-    console.log(scrollDiv);
+    if(!scrollDiv) return;
+
+    const scrollTop = scrollDiv.scrollTop;
+    const clientHeignt = scrollDiv.clientHeight;
+    const scrollHeight = scrollDiv.scrollHeight;
+    const isAtBottom = scrollTop + clientHeignt + 300 >= scrollHeight;
+
+    console.log({isAtBottom});
   }
 }
