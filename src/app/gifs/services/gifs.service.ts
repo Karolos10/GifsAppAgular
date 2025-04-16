@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '@environments/environment';
 import type { GiphyResponde } from '../interfaces/giphy.interface';
 import { Gif } from '../interfaces/gisf.interface';
@@ -13,6 +13,8 @@ export class GifsService {
 
   trendingGifs = signal<Gif[]>([]);
   trendingGifsLoading = signal(true);
+  searchHistory = signal<Record<string, Gif[]>>({});
+  serachHistoryKeys = computed(() => Object.keys(this.searchHistory()));
 
   constructor() {
     this.loadTrendingGifs();
@@ -44,6 +46,13 @@ export class GifsService {
     }).pipe(
       map(({data}) => data),
       map((items) => GifMapper.mapGiphyItemsToGifArray(items)),
+
+      tap( items => {
+        this.searchHistory.update((history) => ({
+          ...history,
+          [query.toLowerCase()]: items,
+        }));
+      })
     );
     // .subscribe((resp) => {
     //   //console.log({resp});
